@@ -1,24 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useMemo, useState } from 'react';
 import './App.css';
 
 function App() {
+  const [answer, setAnswer] = useState<'none' | 'yes' | 'no'>('none');
+  const [noCount, setNoCount] = useState([0, 0]);
+  const [count, setCount] = useState(0);
+  const handlePress = (status: typeof answer) => setAnswer(status);
+
+  const moveNo = () => {
+    handlePress('no');
+    function rand(max: number, min: number) { return Math.floor(Math.random() * (max- min) + min) }
+    setNoCount([rand(200, 500), rand(100, 600)]);
+    setCount(c => c+1);
+  }
+
+  const textTitle = useMemo(() => {
+    if (answer === "none") return 'Veux-tu être ma valentine ? (stp)'
+    if (answer === 'yes') return "LESSSSGOOOOOOOOOOO"
+    if (answer === "no") return `QUOIIIII ???? AH MAIS T'AS PAS LE CHOIX HEIN !!! Tu as refuser mon invitation ${count} fois ...`;
+  }, [answer, count]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="card">
+        <h1>{textTitle}</h1>
+        {(answer === "none" || answer === "no") && <div className="buttonContainer">
+          <button onClick={() => handlePress('yes')}>OUI !</button>
+          <button className={`${answer === "no" ? 'random-floating': ''}`} style={{bottom: noCount[0], left: noCount[1]}} onClick={() => moveNo()}>NON (Attention !)</button>
+        </div>}
+        {answer === "yes" && <img src="https://media.tenor.com/lCKwsD2OW1kAAAAi/happy-cat-happy-happy-cat.gif" className='floatingCat-1' alt="chat mignon" />}
+        {answer === "no" && <img src="data:image/jpeg;base64,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" className='floatingCat-1' alt="chat mignon" />}
+        {answer === "no" && <img src="https://media.tenor.com/NgxjSWAnWnAAAAAe/annoyed-cat-cat-meme.png" className='floatingCat-3' alt="chat mignon" />}
+        {answer === "none" && <img src="https://i.pinimg.com/originals/61/c9/72/61c97278b639327a17fcf33c5b611634.gif" className='floatingCat-2' alt="chat mignon" />}
+      </div>
     </div>
   );
 }
